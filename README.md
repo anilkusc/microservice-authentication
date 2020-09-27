@@ -9,3 +9,5 @@ Simple authentication microservice with backend
 - Migrate Sessions to redis(So make it scalable)
 - Logging all action on backend
 - Scale and connection with other microservices
+- Add Database for username and passwords
+- Encrypt username and passwords
