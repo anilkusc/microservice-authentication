@@ -1,2 +1,2 @@
 # microservice-authentication
-Microservice authentication with frontend(React)
+Simple authentication microservice with backend
