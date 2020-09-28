@@ -85,7 +85,7 @@ class PrivateLink extends React.Component {
         }else if (this.props.role == "admin"){
           link = <li><Link to="/admin">Admin Page</Link></li>
         }else {
-          link = <div></div>
+          link = <div> </div>
         }        
         return (
         <div>{link}</div>
