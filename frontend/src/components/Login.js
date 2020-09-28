@@ -15,6 +15,16 @@ class Login extends React.Component {
         this.handleChangeSuccess = this.handleChangeSuccess.bind(this);
     }
 
+    componentDidMount(){
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        };
+        fetch('/auto', requestOptions)        
+            .then(response => response.json())
+            .then(data => this.handleChangeSuccess(data.authenticated));
+    }
+
     handleChangeUsername(event) {
         this.setState({ username: event.target.value });
     }

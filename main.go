@@ -63,14 +63,23 @@ func logout(w http.ResponseWriter, r *http.Request) {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
-	fmt.Println(session.Values)
 	if session.Values["authenticated"] == true {
 		io.WriteString(w, `{"message":"index"}`)
-		fmt.Println(session.Values)
 		return
 	} else {
 		io.WriteString(w, `{"authenticated":"false"}`)
-		fmt.Println(session.Values)
+		return
+	}
+
+}
+
+func autoLogin(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	if session.Values["authenticated"] == true {
+		io.WriteString(w, `{"authenticated":"true"}`)
+		return
+	} else {
+		io.WriteString(w, `{"authenticated":"false"}`)
 		return
 	}
 
@@ -88,6 +97,7 @@ func main() {
 	r.HandleFunc("/index", index).Methods("POST")
 	r.HandleFunc("/login", login).Methods("POST")
 	r.HandleFunc("/logout", logout).Methods("POST")
+	r.HandleFunc("/auto", autoLogin).Methods("POST")
 	fmt.Println("Serving on:8080")
 	http.ListenAndServe(":8080", r)
 	/*http.HandleFunc("/index", index)
