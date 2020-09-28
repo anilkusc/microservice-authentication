@@ -6,7 +6,8 @@ class Login extends React.Component {
         this.state = { 
         username: '',
         password:'',
-        success: '' 
+        success: '' ,
+        role: '',
         };
 
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -22,7 +23,7 @@ class Login extends React.Component {
         };
         fetch('/auto', requestOptions)        
             .then(response => response.json())
-            .then(data => this.handleChangeSuccess(data.authenticated));
+            .then(data => this.handleChangeSuccess(data));
     }
 
     handleChangeUsername(event) {
@@ -32,10 +33,11 @@ class Login extends React.Component {
         this.setState({ password: event.target.value });
     }
 
-    handleChangeSuccess(sucess_status){
-        this.setState({ success: sucess_status });
+    handleChangeSuccess(auth){
+        this.setState({ success: auth.authenticated });
         if (this.state.success === "true"){
             this.props.handleSetLoggedIn()
+            this.props.handleSetRole(auth.role)
         }else{
             this.props.handleUnSetLoggedIn()
         }
@@ -52,7 +54,7 @@ class Login extends React.Component {
         };
         fetch('/login', requestOptions)        
             .then(response => response.json())
-            .then(data => this.handleChangeSuccess(data.authenticated));
+            .then(data => this.handleChangeSuccess(data));
     }
 
     render() {

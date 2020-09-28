@@ -5,7 +5,7 @@ Simple authentication microservice with backend
 - ~~Simple Logout~~
 - ~~Redirection After Login~~
 - ~~Session based auto Login~~
-- Authorization by User Type(Including menu displays)
+- ~~Authorization by User Type(Including menu displays)~~
 - Migrate Sessions to redis(So make it scalable)
 - Logging all action on backend
 - Scale and connection with other microservices

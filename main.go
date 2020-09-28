@@ -15,6 +15,9 @@ var (
 	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 	key   = []byte("super-secret-key-4")
 	store = sessions.NewCookieStore(key)
+	admin = User{Username: "admin", Password: "admin", Role: "admin"}
+	user  = User{Username: "user", Password: "user", Role: "user"}
+	users = []User{admin, user}
 )
 
 type User struct {
@@ -26,7 +29,8 @@ type User struct {
 func login(w http.ResponseWriter, r *http.Request) {
 
 	//client'tan session-name i al ve session storedan ilgili session'ı getir.
-
+	var auth = false
+	var role string
 	session, _ := store.Get(r, "session-name")
 	w.Header().Add("Content-Type", "application/json")
 	decoder := json.NewDecoder(r.Body)
@@ -37,10 +41,19 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	username := authUser.Username
 	password := authUser.Password
-	if username == "admin" && password == "admin" {
+
+	for _, user := range users {
+		if username == user.Username && password == user.Password {
+			auth = true
+			role = user.Role
+			break
+		}
+	}
+	if auth == true {
 		session.Values["authenticated"] = true
+		session.Values["role"] = role
 		session.Save(r, w)
-		io.WriteString(w, `{"authenticated":"true"}`)
+		io.WriteString(w, `{"authenticated":"true","role":"`+role+`"}`)
 		return
 	} else {
 		session.Values["authenticated"] = false
@@ -76,7 +89,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 func autoLogin(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 	if session.Values["authenticated"] == true {
-		io.WriteString(w, `{"authenticated":"true"}`)
+		role := fmt.Sprintf("%v", session.Values["role"])
+		io.WriteString(w, `{"authenticated":"true","role":"`+role+`"}`)
 		return
 	} else {
 		io.WriteString(w, `{"authenticated":"false"}`)
