@@ -10,4 +10,5 @@ Simple authentication microservice with backend
 - Logging all action on backend(to external sources)
 - Scale and connection with other microservices
 - Add Database for username and passwords
+- Added signup feature
 - Encrypt username and passwords
