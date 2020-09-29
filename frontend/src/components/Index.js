@@ -12,7 +12,7 @@ class Index extends React.Component {
         };
         fetch('/index', requestOptions)        
             .then(response => response.json())
-            .then(data => this.setState({ message: data.message }));
+            .then(data => this.setState({ message: data.role }));
     }
     render() {
         return (

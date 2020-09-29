@@ -4,34 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
-	_ "github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 )
 
 var (
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-	key   = []byte("super-secret-key-4")
-	store = sessions.NewCookieStore(key)
 	admin = User{Username: "admin", Password: "admin", Role: "admin"}
 	user  = User{Username: "user", Password: "user", Role: "user"}
 	users = []User{admin, user}
 )
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
-}
-
 func login(w http.ResponseWriter, r *http.Request) {
-
-	//client'tan session-name i al ve session storedan ilgili session'ı getir.
 	var auth = false
 	var role string
-	session, _ := store.Get(r, "session-name")
+	var session Session
 	w.Header().Add("Content-Type", "application/json")
 	decoder := json.NewDecoder(r.Body)
 	var authUser User
@@ -50,14 +39,29 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if auth == true {
-		session.Values["authenticated"] = true
-		session.Values["role"] = role
-		session.Save(r, w)
-		io.WriteString(w, `{"authenticated":"true","role":"`+role+`"}`)
+		session.Name = CreateUuid()
+		session.Role = role
+		session.Auth = "true"
+		json, err := json.Marshal(session)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		// 21600=6 hours
+		RedisSetEx(session.Name, string(json), "21600")
+		value, err := RedisGet(session.Name)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:    "session-name",
+			Value:   session.Name,
+			Expires: time.Now().Add(21600 * time.Second),
+		})
+		io.WriteString(w, value)
 		return
 	} else {
-		session.Values["authenticated"] = false
-		session.Save(r, w)
 		io.WriteString(w, `{"authenticated":"false"}`)
 		return
 	}
@@ -66,31 +70,50 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func logout(w http.ResponseWriter, r *http.Request) {
 
-	session, _ := store.Get(r, "session-name")
-	session.Values["authenticated"] = false
-	session.Options.MaxAge = 0
-	session.Save(r, w)
+	sessionName, _ := r.Cookie("session-name")
+	RedisDelete(sessionName.Value)
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session-name",
+		Value:   "logout",
+		Expires: time.Now().Add(21600 * time.Second),
+	})
 	io.WriteString(w, `{"authenticated":"false"}`)
 	return
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session-name")
-	if session.Values["authenticated"] == true {
-		io.WriteString(w, `{"message":"index"}`)
+	sessionName, _ := r.Cookie("session-name")
+	sessionJSON, err := RedisGet(sessionName.Value)
+	if err != nil {
+		log.Println(err)
 		return
-	} else {
+	}
+
+	if sessionJSON == "" {
 		io.WriteString(w, `{"authenticated":"false"}`)
 		return
+	} else {
+		io.WriteString(w, sessionJSON)
+		return
+
 	}
 
 }
 
 func autoLogin(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session-name")
-	if session.Values["authenticated"] == true {
-		role := fmt.Sprintf("%v", session.Values["role"])
-		io.WriteString(w, `{"authenticated":"true","role":"`+role+`"}`)
+	sessionName, err := r.Cookie("session-name")
+	if err != nil {
+		io.WriteString(w, `{"authenticated":"false"}`)
+		return
+	}
+	sessionJSON, err := RedisGet(sessionName.Value)
+	if err != nil {
+		io.WriteString(w, `{"authenticated":"false"}`)
+		return
+	}
+
+	if sessionJSON != "" {
+		io.WriteString(w, sessionJSON)
 		return
 	} else {
 		io.WriteString(w, `{"authenticated":"false"}`)
@@ -100,12 +123,6 @@ func autoLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	store.Options = &sessions.Options{
-		//Domain:   "localhost",
-		Path:     "/",
-		MaxAge:   3600 * 6, //6 hour
-		HttpOnly: true,
-	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/index", index).Methods("POST")
@@ -114,9 +131,4 @@ func main() {
 	r.HandleFunc("/auto", autoLogin).Methods("POST")
 	fmt.Println("Serving on:8080")
 	http.ListenAndServe(":8080", r)
-	/*http.HandleFunc("/index", index)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/logout", logout)
-	fmt.Println("Serving on:8080")
-	http.ListenAndServe(":8080", nil)*/
 }

@@ -29,12 +29,9 @@ export default class App extends React.Component {
   }
   handleUnSetLoggedIn() {
     const requestOptions = {
-      method: 'POST',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin":"*" },
-      body: JSON.stringify({ "username": this.state.username,"password": this.state.password })
+      method: 'POST'
   };
-  fetch('/login', requestOptions)        
+  fetch('/logout', requestOptions)        
       .then(response => response.json())
       .then(data =>  this.setState({ message: data.authenticated }));
     this.setState({ isLoggedIn: false , role: "" });
