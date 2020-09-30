@@ -4,6 +4,7 @@ import Admin from "./components/Admin"
 import Index from "./components/Index"
 import User from "./components/User"
 import Proxy from "./components/Proxy"
+import Register from "./components/Register"
 import {
   BrowserRouter as Router,
   Switch,
@@ -51,6 +52,7 @@ export default class App extends React.Component {
           {this.state.isLoggedIn ? <Redirect to="/index" /> : <Login handleSetRole={this.handleSetRole} handleSetLoggedIn={this.handleSetLoggedIn} handleUnSetLoggedIn={this.handleUnSetLoggedIn}/>}
           </Route>
           <Route path="/proxy"> <Proxy/></Route>
+          <Route path="/register"> <Register/></Route>
           <Route path="/logout">
           <Redirect to="/login" />
           </Route>

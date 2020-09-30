@@ -7,17 +7,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var (
-	admin = User{Username: "admin", Password: "admin", Role: "admin"}
-	user  = User{Username: "user", Password: "user", Role: "user"}
-	users = []User{admin, user}
-)
-
 func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/index", Auth(Logger(Index))).Methods("POST")
 	r.HandleFunc("/login", Logger(Login)).Methods("POST")
+	r.HandleFunc("/register", Logger(Register)).Methods("POST")
 	r.HandleFunc("/logout", Auth(Logger(Logout))).Methods("POST")
 	r.HandleFunc("/auto", Auth(Logger(AutoLogin))).Methods("POST")
 	r.HandleFunc("/proxy", Auth(Logger(ProxyPost))).Methods("POST")

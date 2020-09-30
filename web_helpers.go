@@ -111,3 +111,18 @@ func ProxyPost(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(body))
 	return
 }
+
+func Register(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Add("Content-Type", "application/json")
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		io.WriteString(w, `{"status":"false"}`)
+		return
+	}
+	AddUser(user)
+	io.WriteString(w, `{"status":"true"}`)
+	return
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -27,5 +28,14 @@ func CheckUser(user User) (bool, string) {
 		}
 	}
 	return false, ""
+
+}
+
+func AddUser(user User) {
+
+	database, _ := sql.Open("sqlite3", "./test.db")
+	statement, _ := database.Prepare("INSERT INTO Users VALUES (?,?,?,?)")
+	RandomCrypto, _ := rand.Prime(rand.Reader, 16)
+	statement.Exec(RandomCrypto.String(), user.Username, user.Password, user.Role)
 
 }
