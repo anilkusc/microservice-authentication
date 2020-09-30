@@ -11,5 +11,4 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 		log.Println(requestLog)
 		next(w, r)
 	}
-
 }

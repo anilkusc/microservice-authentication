@@ -3,6 +3,7 @@ import Login from "./components/Login"
 import Admin from "./components/Admin"
 import Index from "./components/Index"
 import User from "./components/User"
+import Proxy from "./components/Proxy"
 import {
   BrowserRouter as Router,
   Switch,
@@ -49,6 +50,7 @@ export default class App extends React.Component {
           <Route path="/login">
           {this.state.isLoggedIn ? <Redirect to="/index" /> : <Login handleSetRole={this.handleSetRole} handleSetLoggedIn={this.handleSetLoggedIn} handleUnSetLoggedIn={this.handleUnSetLoggedIn}/>}
           </Route>
+          <Route path="/proxy"> <Proxy/></Route>
           <Route path="/logout">
           <Redirect to="/login" />
           </Route>
@@ -96,6 +98,7 @@ class Links extends React.Component {
   
   render() {
     return  this.props.isLoggedIn ? ( <ul>
+      <li><Link to="/proxy">Proxy</Link></li>
       <li><Link to="/index">Home Page</Link></li>
         <PrivateLink role={this.props.role}/>
       <li><Link to="/logout" onClick={this.props.handleUnSetLoggedIn}>Logout</Link></li>

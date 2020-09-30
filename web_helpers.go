@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -112,4 +114,37 @@ func AutoLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func ProxyPost(w http.ResponseWriter, r *http.Request) {
+	var proxy Proxy
+	err := json.NewDecoder(r.Body).Decode(&proxy)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	data := strings.NewReader(proxy.Data)
+	req, err := http.NewRequest("POST", proxy.Destination, data)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+	fmt.Println(string(body))
+	io.WriteString(w, string(body))
+	return
 }
