@@ -12,6 +12,6 @@ Simple authentication microservice with backend
 - ~~Authentication middleware~~
 - ~~Add Database for username and passwords~~
 - ~~Added signup feature~~
-- Encrypt username and passwords
+- ~~Encrypt username and passwords~~
 - Https support
 - Writing tests for backend
