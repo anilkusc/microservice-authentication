@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -77,43 +76,16 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	sessionName, _ := r.Cookie("session-name")
-	sessionJSON, err := RedisGet(sessionName.Value)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	if sessionJSON == "" {
-		io.WriteString(w, `{"authenticated":"false"}`)
-		return
-	} else {
-		io.WriteString(w, sessionJSON)
-		return
-
-	}
-
+	sessionJSON, _ := RedisGet(sessionName.Value)
+	io.WriteString(w, sessionJSON)
+	return
 }
 
 func AutoLogin(w http.ResponseWriter, r *http.Request) {
-	sessionName, err := r.Cookie("session-name")
-	if err != nil {
-		io.WriteString(w, `{"authenticated":"false"}`)
-		return
-	}
-	sessionJSON, err := RedisGet(sessionName.Value)
-	if err != nil {
-		io.WriteString(w, `{"authenticated":"false"}`)
-		return
-	}
-
-	if sessionJSON != "" {
-		io.WriteString(w, sessionJSON)
-		return
-	} else {
-		io.WriteString(w, `{"authenticated":"false"}`)
-		return
-	}
-
+	sessionName, _ := r.Cookie("session-name")
+	sessionJSON, _ := RedisGet(sessionName.Value)
+	io.WriteString(w, sessionJSON)
+	return
 }
 
 func ProxyPost(w http.ResponseWriter, r *http.Request) {

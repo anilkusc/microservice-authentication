@@ -9,7 +9,7 @@ Simple authentication microservice with backend
 - ~~Migrate Sessions to redis(So make it scalable)~~
 - ~~Logging all action on backend(to external sources)~~
 - ~~Scale and connection with other microservices~~
-- Authentication middleware
+- ~~Authentication middleware~~
 - Add Database for username and passwords
 - Added signup feature
 - Encrypt username and passwords
