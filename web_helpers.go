@@ -21,16 +21,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	username := authUser.Username
-	password := authUser.Password
-
-	for _, user := range users {
-		if username == user.Username && password == user.Password {
-			auth = true
-			role = user.Role
-			break
-		}
-	}
+	auth, role = CheckUser(authUser)
 	if auth == true {
 		session.Name = CreateUuid()
 		session.Role = role

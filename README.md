@@ -10,7 +10,7 @@ Simple authentication microservice with backend
 - ~~Logging all action on backend(to external sources)~~
 - ~~Scale and connection with other microservices~~
 - ~~Authentication middleware~~
-- Add Database for username and passwords
+- ~~Add Database for username and passwords~~
 - Added signup feature
 - Encrypt username and passwords
 - Https support
