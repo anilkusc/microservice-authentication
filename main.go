@@ -17,5 +17,6 @@ func main() {
 	r.HandleFunc("/auto", Auth(Logger(AutoLogin))).Methods("POST")
 	r.HandleFunc("/proxy", Auth(Logger(ProxyPost))).Methods("POST")
 	fmt.Println("Serving on:8080")
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServeTLS(":8080", "./certs/server.crt", "./certs/server.key", r)
+	//http.ListenAndServe(":8080", r)
 }
