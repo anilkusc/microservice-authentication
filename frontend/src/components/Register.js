@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
-
+    Link,
     Redirect
   } from "react-router-dom";
 
@@ -54,6 +53,8 @@ class Register extends React.Component {
             return <Redirect to="/login" />
           }
         return (
+            <div>
+
             <form onSubmit={this.handleSubmit}>
                 <br></br>
                 <br></br>
@@ -78,6 +79,9 @@ class Register extends React.Component {
                 <br></br>              
                 <input type="submit" value="Submit" />
             </form>
+            <button ><Link to="/login">Login</Link></button>
+            </div>
+
         );
     }
 }
