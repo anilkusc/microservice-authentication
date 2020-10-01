@@ -1,6 +1,6 @@
 # microservice-authentication
 Simple authentication microservice with backend
-# TODO's
+#  ~~TODO's~~
 - ~~Simple Authentication~~
 - ~~Simple Logout~~
 - ~~Redirection After Login~~
