@@ -14,4 +14,3 @@ Simple authentication microservice with backend
 - ~~Added signup feature~~
 - ~~Encrypt username and passwords~~
 - ~~Https support~~
-- Writing tests for backend
